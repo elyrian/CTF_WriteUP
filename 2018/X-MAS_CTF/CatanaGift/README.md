@@ -12,6 +12,7 @@ Cette fonction prend trois arguments en entrée (edi, esi, edx), avec esi et edx
   - func(5,0,0) = 42
 Avec une recherche sur google "Suite numérique 1 1 2 5 14 42", on apprend que c'est la suite de Catalan, et on obtient une formule qui se calcule beaucoup plus rapidement que le code récursif utilisé dans le binaire:
 
+```c
 int catalan_2(int a){
   int res = 1;
   for (int i=0; i<a; i++) {
@@ -19,6 +20,7 @@ int catalan_2(int a){
   }
   return res;
 }
+```
   
 (l'argument "a" correspond à la valeur entrée dans le registre edi)
 On obtient bien le même résultat que ce qui est sorti par le binaire pour les quelques premières valeurs qu'il est capable de calculer.
