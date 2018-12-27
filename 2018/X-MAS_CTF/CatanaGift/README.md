@@ -65,7 +65,6 @@ X-MAS{c474l4n_4nd_54n74_w3r3_600d_fr13nd5_1_7h1nk}
 ```
 
 Elyrian,
-
 WAFU Team ~~
 
 
