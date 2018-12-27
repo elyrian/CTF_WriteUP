@@ -38,6 +38,7 @@ En y regardant de plus près, les valeurs les plus grandes sont sur 64 bits, il 
 
 En testant sur l'ensemble des valeurs sorties par le programme, on repère une erreur pour catalan_2(34) et pour catalan_2(35) (test avec les valeurs données sur http://jm.davalan.org/mots/suites/catalan/index.html). On remplace le code avec deux cas particuliers : 
 
+```c
 unsigned long long catalan_2(int a){
   unsigned long long res = 1;
   for (int i=1; i<a; i++) {
@@ -47,6 +48,7 @@ unsigned long long catalan_2(int a){
   if (a==35) { res = 3116285494907301262LL; }
   return res;
 }
+```
 
 ==> Compilation, patch, et... X-MAS{c474l4n_4nd_54n74_w3r3_600d_fr13nd5_1_7h1nk} !
 
