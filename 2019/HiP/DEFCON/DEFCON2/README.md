@@ -15,7 +15,7 @@ DEFCON is the website controlling the security level of the room. The 5 differen
 
 For this challenge, we have a look at the check2(pwd) function.
 
-```
+```JS
 function check2(pwd) {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('Timeout while executing JVM')), 200000);
@@ -50,13 +50,13 @@ function check2(pwd) {
   }
 ```
 
-#### Preliminary Analysis
+#### 1. Preliminary Analysis
 
 This challenge is much harder than the previous ones. It seems that there is a link with a JVM (Java Virtual Machine). I did not know about Doppio, so let’s google it ! Hmm, “Restaurant in Paris” ? Nope, let’s try “Doppio JS”... Much better ! Indeed, it implements a JVM 100% in javascript. So, the challenge should probably run a Java code to check the password.
 
 The following piece of code seems pretty interesting:
 
-```
+```JS
 jvm.runClass('App', [pwd], function (exitCode) {
   console.log('JVM started successfully');
   if (exitCode !== 0) {
@@ -67,14 +67,14 @@ jvm.runClass('App', [pwd], function (exitCode) {
 
 It seems to run a java class named App, with a parameter [pwd], and checks the exitCode of the java class.
 
-#### App.class
+#### 2. App.class
 
 To retrieve the java code used to check the 2nd level password, it is necessary to intercept the files that are downloaded by your web browser. For example, you can use the Inspect element tool of the browser. The password checking for the 2nd level takes a few minutes, go get a coffee and come back. Many .jar files are downloaded, but also... A App.class file !
 
 Many tools exist to decompile Java .class files. I choosed to use an online website (http://www.javadecompilers.com/) and obtained the code given in `App.java`.
 The main function calls 10 functions and check if the base64-encoded result is equal to `ZvhdxFZGZaN/M1IvAD8qaJI9UQqPluT45250BfOZPygRl68GGZqZ7QS+GTFUGcONT8r7cEkTh8gSgELMXdcURGPb25wfCIrVG6ptrLr6GJ9IpBeLP40Gu1VKwZJtdw75ud+LNgXop0KE4CGm8cCx6eqwnAFioKvBkJQEjQ==`.
 
-```
+```JS
 public static void main(String[] paramArrayOfString)
 {
   byte[] arrayOfByte = paramArrayOfString[0].getBytes();
@@ -96,11 +96,11 @@ public static void main(String[] paramArrayOfString)
 To retrieve the correct password, we have to reverse each transformation
 function.
 
-#### password_enchiffragement_ functions
+#### 3. password_enchiffragement_ functions
 
 The password enchiffragement functions are structured as follows:
 
-```
+```JS
 public static byte[] password_enchiffragement_9(byte[] paramArrayOfByte)
 {
   int i = 0;
@@ -131,7 +131,7 @@ public static byte[] password_enchiffragement_9(byte[] paramArrayOfByte)
 
 The first part of the code checks the length of the output. The second part creates a new byteArray of the same length, performs a xor on each byte, and shuffles them (in a deterministic way). To retrieve the input (paramArrayOfByte) from the output (arrayOfByte), it is neccessary to perform the reverse action. In the example above, it means:
 
-```
+```python
 input[5] = output[0] ^ 0x8D
 input[98] = output[1] ^ 0x4B
 input[123] = output[2] ^ 0x36
@@ -142,7 +142,7 @@ input[120] = output[123]
 My solution is written in Python, so I had to transform the original code `arrayOfByte[Y] = ((byte)(paramArrayOfByte[X] ^ 0xZZ));` into the corresponding reverse python code `input[X] = output[Y] ^ 0xZZ`.
 The following script has been used to automatically reverse these functions (`reverse_xors.py`):
 
-```
+```python
 file_in = "dechiffre_1.txt"
 file_out = "code_dechiffre_1.py"
 
@@ -157,11 +157,11 @@ with open(file_in,'r') as f_in:
       f_out.write("final[%s] = input_str[%s] ^ %s\n" % (final_index, a_index, xor_value))
 ```
 
-#### base64_ functions
+#### 4. base64_ functions
 
 According to its name... These functions perform a base64 encoding. The structure of these functions is as follows:
 
-```
+```JS
 public static byte[] base64_6(byte[] paramArrayOfByte)
 {
   String str = "V-GCxZTakQFBs1oRUEtySWOiYJ0rwghfmpqub7394dejc58_AzIlDH6MNvLX2PnK";
@@ -185,12 +185,11 @@ public static byte[] base64_6(byte[] paramArrayOfByte)
 }
 ```
 
-The code loops over groups of 3 bytes of the input, and transform then into 4 letters picked from the str variable. If the length of the input is not a multiple
-of 3, a padding is added.
+The code loops over groups of 3 bytes of the input, and transform then into 4 letters picked from the str variable. If the length of the input is not a multiple of 3, a padding is added.
 The 6-MSB of the 1st byte gives the index of the 1st letter, the 2-LSB of the 1st byte and the 4-MSB of the 2nd byte gives the index of the 2nd letter, the 4-LSB of the 2nd byte and the 2-MSB of the 3rd byte gives the index of the 3rd letter, and the 6-LSB of the 3rd byte gives the index of the 4th letter. So, this is actually a base64 encoding. However, the alphabet used is not conventional and is modified from a base64 function to another.
 The following piece of code is used to perform the base64 decode given a specific alphabet .
 
-```
+```python
 def base64_6(input_str):
   std_alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
   custom_alphabet = "V-GCxZTakQFBs1oRUEtySWOiYJ0rwghfmpqub7394dejc58_AzIlDH6MNvLX2PnK"
@@ -201,10 +200,10 @@ def base64_6(input_str):
   return str_to_intlist(final)
 ```
 
-#### And... What about the Flag !?
+#### 5. And... What about the Flag !?
 To obtain the flag, the reverse functions have to be run in the reverse order, taking the final output as an input parameter. I first translated the base64 encoded final output into a list of integer to work on it.
 
-```
+```python
 final_final = [0x66,0xf8,0x5d,0xc4,0x56,0x46,0x65,0xa3,0x7f,0x33,0x52,0x2f,
 0x00,0x3f,0x2a,0x68,0x92,0x3d,0x51,0x0a,0x8f,0x96,0xe4,0xf8,0xe7,0x6e,0x74,
 0x05,0xf3,0x99,0x3f,0x28,0x11,0x97,0xaf,0x06,0x19,0x9a,0x99,0xed,0x04,0xbe,
@@ -232,6 +231,6 @@ print_as_char(flag)
 
 The complete code is available in `script.py`. It is not very clean, but.. It
 works!
-Oh, and here is the flag : “RuNn1n9J4v41NJ4v45Cr1Pt15th3fUtUR3” !
+Oh, and here is the flag : **“RuNn1n9J4v41NJ4v45Cr1Pt15th3fUtUR3”** !
 
 
