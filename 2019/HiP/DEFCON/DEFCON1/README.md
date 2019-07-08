@@ -15,13 +15,13 @@ DEFCON is the website controlling the security level of the room. The 5 differen
 
 For this challenge, we only have this in the scripts.js file:
 
-```
+```JS
 function check1(pwd) {
   return checkcheck1(pwd);
 }
 ```
 
-#### Preliminary Analysis
+#### 1. Preliminary Analysis
 
 Indeed, the *checkcheck1(pwd)* function is defined in another JS file, `x.js`. The *checkcheck1* function is defined line 2433. It checks if the length of the password is 2703, define two variables *pos=[75,79]* and *walls* composed of many many slices *[i,j]*. The values of i and j are between 0 and 160.
 
@@ -31,7 +31,7 @@ So, the password is a path to go from [75,79] to [34,79] inside the maze defined
 
 The following pseudo-code gives a clear idea of the code of the *checkcheck1* function:
 
-```
+```JS
 checkcheck1 = function(pwd) {
   var _1, i, pos, pwd, walls;
 
@@ -87,7 +87,7 @@ checkcheck1 = function(pwd) {
 };
 ```
 
-#### Welcome to the Maze
+#### 2. Welcome to the Maze
 
 First, lets print the maze to have an idea of the problem. 
 
@@ -101,7 +101,7 @@ If a dead-end is found, it is painted in violet. Each violet cell is then consid
 
 The right path is clearly visible ! However, there are 2712 white cells instead of 2702. In fact, a few cells remains white because of the location of the blue pixel. The image can be easily modified by hand using Gimp, for example.
 
-#### Path to the Flag
+#### 3. Path to the Flag
 
 To retrieve the flag from the image, the path from the orange to the blue pixel should be traduced into u, d, l, r. The script `get_path.py` is used to retrieve the path.
 
