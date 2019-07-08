@@ -15,7 +15,7 @@ DEFCON is the website controlling the security level of the room. The 5 differen
 
 The interesting function in scripts.js is the check4() function:
 
-```
+```JS
 function check4(pwd) {
   var input = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   var output = "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm";
