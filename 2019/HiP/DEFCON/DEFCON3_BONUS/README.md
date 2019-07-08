@@ -3,9 +3,11 @@
 
 ### Resolution
 
-This challenge gave no points, but you know, saving people... Here is the code that checks the password for level 3:
+This challenge gave no points, but you know, saving people... 
 
-```
+Here is the code that checks the password for level 3:
+
+```JS
 function check3(pwd) {
   var score = 0;
   var final = 624986;
@@ -50,15 +52,15 @@ function check3(pwd) {
 The maximum length of the password is 20 characters. Each char of the
 password have an impact on the three variables score, up and b. The function loops over 7 conditions:
 
-1. b%10==0: Reset score, increment b and up
-2. up%5==0: Increment score, b and up
-3. pwd.charAt(i)==“1”: Increment score, b and up
-4. pwd.charAt(i)==“2”: Multiply score by 2, increment b and up
-5. pwd.charAt(i)==“5”: Multiply score by 5, increment b and up
-6. pwd.charAt(i)==“8”: Increment b by 2
-7. pwd.charAt(i)==“9”: Increment up by 3
+1. **b%10==0**: Reset score, increment b and up
+2. **up%5==0**: Increment score, b and up
+3. **pwd.charAt(i)==“1”**: Increment score, b and up
+4. **pwd.charAt(i)==“2”**: Multiply score by 2, increment b and up
+5. **pwd.charAt(i)==“5”**: Multiply score by 5, increment b and up
+6. **pwd.charAt(i)==“8”**: Increment b by 2
+7. **pwd.charAt(i)==“9”**: Increment up by 3
 
-At the end, the function checks if score == final + b. The value of final is constant and equal to 624986. The value of final is very close to 625000=5**7*2**3. The final password should contain 7 times the character “5” and 3 times the character “2”. However, we don’t want to go into the 1st and 2nd condition. The characters “8” and “9” will be used to avoid them.
+At the end, the function checks if score == final + b. The value of final is constant and equal to 624986. The value of final is very close to `625000=5**7*2**3`. The final password should contain 7 times the character “5” and 3 times the character “2”. However, we don’t want to go into the 1st and 2nd condition. The characters “8” and “9” will be used to avoid them.
 
 ```
 pwd[0]: Any key can be used, because the 1st condition is necessarily reached.
@@ -97,6 +99,6 @@ pwd[16]: "2" (3rd time)
   score=625000, b=14, up=24
 ```
 
-The password “01559559559582922” leads to score=625000 and b=14, so
-final+b==625000==score ! No need to go further, here is the flag.
+The password **“01559559559582922”** leads to `score=625000` and `b=14`, so
+`final+b==625000==score` ! No need to go further, here is the flag.
 
