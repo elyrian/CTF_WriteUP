@@ -15,7 +15,7 @@ DEFCON is the website controlling the security level of the room. The 5 differen
 
 The web page source code includes several JS scripts :
 
-```
+```JS
 <script type='text/javascript' src="/static/lib/browserfs.min.js"></script>
 <script type='text/javascript' src="/static/java/doppio.js"></script>
 <script type='text/javascript' src="/static/lib/libs.min.js"></script>
@@ -26,7 +26,7 @@ The web page source code includes several JS scripts :
 
 Let’s have a look at `scripts.js`. We found 5 interesting functions that seems to check the passwords entered through the DEFCON Level Console. Here is the 5th function:
 
-```
+```JS
 function check5(pwd) {
   return pwd === "STRONGPASSWORD";
 }
